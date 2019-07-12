@@ -24,21 +24,27 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.annotation:annotation:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // Include local lib mostly for debug purpose.
     // implementation project(':lib')
 
     // Use the following line to include client library for Face API from Maven Central Repository
-    implementation 'com.google.firebase:firebase-ml-vision:15.0.0'
-    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:15.0.0'
-    implementation 'com.google.firebase:firebase-ml-model-interpreter:15.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision:21.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:18.0.0'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:20.0.0'
     implementation 'com.microsoft.projectoxford:face:1.4.4'
     implementation 'com.google.code.gson:gson:2.8.5'
+
+
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
+    implementation 'org.jetbrains:annotations:15.0'
 }
 apply plugin: 'com.google.gms.google-services'

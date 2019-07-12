@@ -39,8 +39,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -59,11 +58,15 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.samples.R;
 import com.microsoft.projectoxford.face.samples.helper.LogHelper;
 import com.microsoft.projectoxford.face.samples.helper.SampleApp;
 import com.microsoft.projectoxford.face.samples.helper.StorageHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -388,7 +391,7 @@ public class PersonGroupActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         addNewPersonGroup = savedInstanceState.getBoolean("AddNewPersonGroup");

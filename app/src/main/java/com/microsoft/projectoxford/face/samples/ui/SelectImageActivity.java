@@ -37,10 +37,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.microsoft.projectoxford.face.samples.R;
 
@@ -72,7 +73,7 @@ public class SelectImageActivity extends AppCompatActivity {
 
     // Recover the saved state when the activity is recreated.
     @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mUriPhotoTaken = savedInstanceState.getParcelable("ImageUri");
     }

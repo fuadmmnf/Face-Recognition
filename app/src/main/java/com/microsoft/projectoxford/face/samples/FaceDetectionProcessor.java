@@ -11,17 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package com.microsoft.projectoxford.face.samples;
+
+import androidx.annotation.NonNull;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,13 +46,17 @@ import com.microsoft.projectoxford.face.samples.persongroupmanagement.PersonGrou
 import com.microsoft.projectoxford.face.samples.ui.IdentificationActivity;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,24 +73,35 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
     public Context context;
     public Bitmap mBitmap;
     public String name;
-    private TextView list;
+//    private TextView list;
     private String student_name = "";
     private List<String> studentList = new ArrayList<>();
-
+    private Map<Integer, Boolean> discoveredFaces = new HashMap<>();
+    private List<String> detectedFaceNamesList = new ArrayList<>();
+    private ArrayAdapter<String> arrayAdapter;
     boolean detected;
     FaceListAdapter mFaceListAdapter;
     ImageView imageView;
+    ListView detectedFaceNames;
 
 
-    public FaceDetectionProcessor(Context context, TextView list, ImageView imageView) {
+
+
+    public FaceDetectionProcessor(Context context, TextView list, ImageView image, ListView detectedFaceNames) {
         this.context = context;
-        this.list = list;
-        this.imageView = imageView;
+//        this.list = list;
+        this.imageView = image;
+        this.detectedFaceNames = detectedFaceNames;
+
+         arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, detectedFaceNamesList);
+
+        detectedFaceNames.setAdapter(arrayAdapter);
+
         FirebaseVisionFaceDetectorOptions options =
                 new FirebaseVisionFaceDetectorOptions.Builder()
-                        .setModeType(FirebaseVisionFaceDetectorOptions.ACCURATE_MODE)
-                        .setClassificationType(FirebaseVisionFaceDetectorOptions.NO_CLASSIFICATIONS)
-                        .setTrackingEnabled(true)
+                        .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
+                        .setClassificationMode(FirebaseVisionFaceDetectorOptions.NO_CLASSIFICATIONS)
+                        .enableTracking()
                         .build();
 
         detector = FirebaseVision.getInstance().getVisionFaceDetector(options);
@@ -105,37 +124,42 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 
     @Override
     protected void onSuccess(
-            @NonNull List<FirebaseVisionFace> faces,
-            @NonNull FrameMetadata frameMetadata,
-            @NonNull GraphicOverlay graphicOverlay) throws IOException {
+            @NotNull List<FirebaseVisionFace> faces,
+            @NotNull FrameMetadata frameMetadata,
+            @NotNull GraphicOverlay graphicOverlay) throws IOException {
         graphicOverlay.clear();
         for (int i = 0; i < faces.size(); ++i) {
             FirebaseVisionFace face = faces.get(i);
+            Object res = discoveredFaces.get(face.getTrackingId());
+            if (res == null) res = Boolean.FALSE;
+            if (res == Boolean.FALSE) {
 
-            Rect faceBox = face.getBoundingBox();
+                Rect faceBox = face.getBoundingBox();
 
-            Bitmap originalBitmap = originalImage.getBitmapForDebugging();
-            int centerX = faceBox.centerX() - faceBox.width() / 2;
-            int centerY = faceBox.centerY() - faceBox.height() / 2;
+                Bitmap originalBitmap = originalImage.getBitmap();
+                int centerX = faceBox.centerX() - faceBox.width() / 2;
+                int centerY = faceBox.centerY() - faceBox.height() / 2;
 
-            int width = Math.min(faceBox.width(), originalBitmap.getWidth() - centerX);
-            int height = Math.min(faceBox.height(), originalBitmap.getHeight() - centerY);
+                int width = Math.min(faceBox.width(), originalBitmap.getWidth() - centerX);
+                int height = Math.min(faceBox.height(), originalBitmap.getHeight() - centerY);
 
-            Bitmap faceBitmap = Bitmap.createBitmap(originalImage.getBitmapForDebugging(), Math.abs(centerX), Math.abs(centerY), width, height);
-            mBitmap = faceBitmap;
-            imageView.setImageBitmap(mBitmap);
-//            Toast.makeText(context,"start",Toast.LENGTH_LONG).show();
-            getGroup();
+                Bitmap faceBitmap = Bitmap.createBitmap(originalImage.getBitmap(), Math.abs(centerX), Math.abs(centerY), width, height);
+                mBitmap = faceBitmap;
+                imageView.setImageBitmap(mBitmap);
+                //            Toast.makeText(context,"start",Toast.LENGTH_LONG).show();
+                getGroup();
 
-            detect(mBitmap);
+                detect(mBitmap);
 
 
-//            Toast.makeText(context, "detect complete", Toast.LENGTH_LONG).show();
-            identify();
-//            Toast.makeText(context,"identify complete complete",Toast.LENGTH_LONG).show();
+                //            Toast.makeText(context, "detect complete", Toast.LENGTH_LONG).show();
+//                identify();
+                //            Toast.makeText(context,"identify complete complete",Toast.LENGTH_LONG).show();
+                discoveredFaces.put(face.getTrackingId(), Boolean.TRUE);
+            }
             FaceGraphic faceGraphic = new FaceGraphic(graphicOverlay);
             graphicOverlay.add(faceGraphic);
-            faceGraphic.updateFace(face, frameMetadata.getCameraFacing(), name);
+            faceGraphic.updateFace(face, frameMetadata.getCameraFacing());
 //            Toast.makeText(context,"end",Toast.LENGTH_LONG).show();
 
         }
@@ -148,7 +172,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
         ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
 
         // Start a background task to detect faces in the image.
-        detectTask=new FaceDetectionProcessor.DetectionTask().execute(inputStream);
+        detectTask = new FaceDetectionProcessor.DetectionTask().execute(inputStream);
 
     }
 
@@ -197,12 +221,12 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 
                 } else {
                     detected = true;
-                    Toast.makeText(context, "EBAR FACE PAISE", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Face detected", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 detected = false;
             }
-
+            identify();
         }
     }
 
@@ -219,8 +243,6 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 
             identifyTask = new FaceDetectionProcessor.IdentificationTask(mPersonGroupId).execute(
                     faceIds.toArray(new UUID[faceIds.size()]));
-
-
 
 
         } else {
@@ -310,14 +332,21 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
                         String personName = StorageHelper.getPersonName(
                                 personId, mPersonGroupId, context);
                         name = personName;
+                        if(!detectedFaceNamesList.contains(personName))
+                        {
+                            Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
+
+                            detectedFaceNamesList.add(personName);
+                            arrayAdapter.notifyDataSetChanged();
+                        }
                     }
 
-                    Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
-                    if (!studentList.contains(name)) {
-                        student_name = list.getText() + name;
-                        list.setText(student_name);
-                        studentList.add(name);
-                    }
+//                    Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
+//                    if (!studentList.contains(name)) {
+//                        student_name = list.getText() + name;
+//                        list.setText(student_name);
+//                        studentList.add(name);
+//                    }
 
                     logString += "Face " + identifyResult.faceId.toString() + " is identified as "
                             + (identifyResult.candidates.size() > 0
@@ -348,15 +377,18 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
     }
 
     @Override
-    protected void onFailure(@NonNull Exception e) {
+    protected void onFailure(@NotNull Exception e) {
         Log.e(TAG, "Face detection failed " + e);
     }
 
 
     private class FaceListAdapter {
         // The detected faces.
+        @NonNull
         List<Face> faces;
+        @NonNull
         List<IdentifyResult> mIdentifyResults;
+        @NonNull
         List<Bitmap> faceThumbnails;
 
         FaceListAdapter(Face[] detectionResult) {

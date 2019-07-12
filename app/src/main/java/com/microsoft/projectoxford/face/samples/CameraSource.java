@@ -22,14 +22,17 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
+
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import androidx.core.content.PermissionChecker;
+
 import com.google.android.gms.common.images.Size;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.Thread.State;
@@ -155,7 +158,7 @@ public class CameraSource {
    *
    * @throws IOException if the camera's preview texture or display could not be initialized
    */
-  @RequiresPermission(Manifest.permission.CAMERA)
+
   public synchronized CameraSource start() throws IOException {
     if (camera != null) {
       return this;
@@ -180,7 +183,6 @@ public class CameraSource {
    * @param surfaceHolder the surface holder to use for the preview frames
    * @throws IOException if the supplied surface holder could not be used as the preview display
    */
-  @RequiresPermission(Manifest.permission.CAMERA)
   public synchronized CameraSource start(SurfaceHolder surfaceHolder) throws IOException {
     if (camera != null) {
       return this;

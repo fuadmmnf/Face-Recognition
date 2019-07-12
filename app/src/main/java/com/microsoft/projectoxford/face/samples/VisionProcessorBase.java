@@ -15,13 +15,14 @@ package com.microsoft.projectoxford.face.samples;
 
 import android.graphics.Bitmap;
 import android.media.Image;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -112,7 +113,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                 .addOnFailureListener(
                         new OnFailureListener() {
                             @Override
-                            public void onFailure(@NonNull Exception e) {
+                            public void onFailure(@Nullable Exception e) {
                                 shouldThrottle.set(false);
                                 VisionProcessorBase.this.onFailure(e);
                             }
@@ -129,9 +130,9 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
     protected abstract Task<T> detectInImage(FirebaseVisionImage image);
 
     protected abstract void onSuccess(
-            @NonNull T results,
-            @NonNull FrameMetadata frameMetadata,
-            @NonNull GraphicOverlay graphicOverlay) throws IOException;
+            @Nullable T results,
+            @Nullable FrameMetadata frameMetadata,
+            @Nullable GraphicOverlay graphicOverlay) throws IOException;
 
-    protected abstract void onFailure(@NonNull Exception e);
+    protected abstract void onFailure(@Nullable Exception e);
 }

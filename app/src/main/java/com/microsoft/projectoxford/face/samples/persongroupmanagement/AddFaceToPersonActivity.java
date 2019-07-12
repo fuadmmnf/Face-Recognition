@@ -38,8 +38,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +50,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.AddPersistedFaceResult;
 import com.microsoft.projectoxford.face.contract.Face;
@@ -60,6 +61,8 @@ import com.microsoft.projectoxford.face.samples.helper.ImageHelper;
 import com.microsoft.projectoxford.face.samples.helper.LogHelper;
 import com.microsoft.projectoxford.face.samples.helper.SampleApp;
 import com.microsoft.projectoxford.face.samples.helper.StorageHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -280,7 +283,7 @@ public class AddFaceToPersonActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         mPersonId = savedInstanceState.getString("PersonId");

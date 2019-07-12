@@ -17,23 +17,29 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import androidx.annotation.NonNull;
+
 
 import com.google.android.gms.common.annotation.KeepName;
-import com.google.firebase.ml.common.FirebaseMLException;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 
 import java.io.IOException;
@@ -61,6 +67,7 @@ public final class LivePreviewActivity extends AppCompatActivity
   private String selectedModel = FACE_DETECTION;
   public FaceDetectionProcessor faceDetectionProcessor;
 
+  public ListView faceNamesList;
   public TextView list;
   public ImageView image;
 
@@ -74,6 +81,7 @@ public final class LivePreviewActivity extends AppCompatActivity
     preview = (CameraSourcePreview) findViewById(R.id.firePreview);
     list=findViewById(R.id.list);
     image=findViewById(R.id.image);
+    faceNamesList = findViewById(R.id.list_slide_panel);
     if (preview == null) {
       Log.d(TAG, "Preview is null");
     }
@@ -105,7 +113,11 @@ public final class LivePreviewActivity extends AppCompatActivity
     } else {
       getRuntimePermissions();
     }
+
+
+
   }
+
 
 
 
@@ -160,7 +172,7 @@ public final class LivePreviewActivity extends AppCompatActivity
         break;
       case FACE_DETECTION:
         Log.i(TAG, "Using Face Detector Processor");
-        faceDetectionProcessor=new FaceDetectionProcessor(getApplicationContext(),list,image);
+        faceDetectionProcessor=new FaceDetectionProcessor(getApplicationContext(),list, image, faceNamesList);
         cameraSource.setMachineLearningFrameProcessor(faceDetectionProcessor);
         break;
       case BARCODE_DETECTION:

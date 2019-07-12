@@ -5,4 +5,6 @@
     <color name="button_enabled_background">#3399FF</color>
     <color name="button_disabled_background">#C0C0C0</color>
     <color name="control_background">#cc4285f4</color>
+    <color name="colorPrimaryTextBlack">#080808</color>
+    <color name="colorSecondaryTextGray">#757575</color>
 </resources>

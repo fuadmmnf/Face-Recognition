@@ -71,10 +71,9 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
    * Updates the face instance from the detection of the most recent frame. Invalidates the relevant
    * portions of the overlay to trigger a redraw.
    */
-  public void updateFace(FirebaseVisionFace face, int facing,String name) {
+  public void updateFace(FirebaseVisionFace face, int facing) {
     firebaseVisionFace = face;
     this.facing = facing;
-    this.name=  name;
     postInvalidate();
   }
 
@@ -90,7 +89,7 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
     float x = translateX(face.getBoundingBox().centerX());
     float y = translateY(face.getBoundingBox().centerY());
     canvas.drawCircle(x, y, FACE_POSITION_RADIUS, facePositionPaint);
-    canvas.drawText("id: " + face.getTrackingId()+" "+name, x + ID_X_OFFSET, y + ID_Y_OFFSET, idPaint);
+    canvas.drawText("id: " + face.getTrackingId(), x + ID_X_OFFSET, y + ID_Y_OFFSET, idPaint);
 //    canvas.drawText(
 //        "happiness: " + String.format("%.2f", face.getSmilingProbability()),
 //        x + ID_X_OFFSET * 3,
@@ -121,13 +120,13 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
 //    }
 
     // Draws a bounding box around the face.
-    float xOffset = scaleX(face.getBoundingBox().width() / 2.0f);
-    float yOffset = scaleY(face.getBoundingBox().height() / 2.0f);
-    float left = x - xOffset;
-    float top = y - yOffset;
-    float right = x + xOffset;
-    float bottom = y + yOffset;
-    canvas.drawRect(left, top, right, bottom, boxPaint);
+//    float xOffset = scaleX(face.getBoundingBox().width() / 2.0f);
+//    float yOffset = scaleY(face.getBoundingBox().height() / 2.0f);
+//    float left = x - xOffset;
+//    float top = y - yOffset;
+//    float right = x + xOffset;
+//    float bottom = y + yOffset;
+//    canvas.drawRect(left, top, right, bottom, boxPaint);
 
 //    if(name==null) canvas.drawText("none",top,left,boxPaint);
 //    else canvas.drawText(name,top,left,boxPaint);
